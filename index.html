@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestión de Viajes</title>
+
+    <!-- Bootstrap 5.0 -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link href="assets/css/styles.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-light">
+    <nav class="navbar navbar-dark bg-primary shadow-sm mb-4">
+      <div class="container">
+        <span class="navbar-brand mb-0 h1">Gestión de Viajes</span>
+        <span class="navbar-text text-white-50 small"
+          >Destinos, turistas y reservas</span
+        >
+      </div>
+    </nav>
+
+    <main class="container pb-5">
+
+      <ul class="nav nav-tabs mb-4" id="pestanas" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="tab-destinos"
+            data-bs-toggle="tab"
+            data-bs-target="#panel-destinos"
+            type="button"
+            role="tab"
+            aria-controls="panel-destinos"
+            aria-selected="true"
+          >
+            Destinos
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="tab-turistas"
+            data-bs-toggle="tab"
+            data-bs-target="#panel-turistas"
+            type="button"
+            role="tab"
+            aria-controls="panel-turistas"
+            aria-selected="false"
+          >
+            Turistas
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="tab-reservas"
+            data-bs-toggle="tab"
+            data-bs-target="#panel-reservas"
+            type="button"
+            role="tab"
+            aria-controls="panel-reservas"
+            aria-selected="false"
+          >
+            Reservas
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <!--  DESTINOS  -->
+        <section
+          class="tab-pane fade show active"
+          id="panel-destinos"
+          role="tabpanel"
+          aria-labelledby="tab-destinos"
+        >
+          <div class="row g-4">
+            <div class="col-lg-4">
+              <div class="card shadow-sm">
+                <div
+                  class="card-header bg-primary text-white"
+                  id="tituloFormDestino"
+                >
+                  Nuevo destino
+                </div>
+                <div class="card-body">
+                  <form id="formDestino" novalidate>
+                    <input type="hidden" id="destinoId" name="id" />
+
+                    <div class="mb-3">
+                      <label for="destinoNombre" class="form-label"
+                        >Nombre</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="destinoNombre"
+                        name="nombre"
+                        maxlength="100"
+                        placeholder="Ej. Islas Galápagos"
+                        required
+                      />
+                      <div class="invalid-feedback">
+                        Ingresa el nombre del destino.
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="destinoPais" class="form-label">País</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="destinoPais"
+                        name="pais"
+                        maxlength="80"
+                        placeholder="Ej. Ecuador"
+                        required
+                      />
+                      <div class="invalid-feedback">Ingresa el país.</div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="destinoDescripcion" class="form-label"
+                        >Descripción</label
+                      >
+                      <textarea
+                        class="form-control"
+                        id="destinoDescripcion"
+                        name="descripcion"
+                        rows="3"
+                        maxlength="1000"
+                        placeholder="Opcional"
+                      ></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="destinoCosto" class="form-label"
+                        >Costo por persona</label
+                      >
+                      <div class="input-group has-validation">
+                        <span class="input-group-text">$</span>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="destinoCosto"
+                          name="costo"
+                          min="0"
+                          max="99999999.99"
+                          step="0.01"
+                          placeholder="0.00"
+                          required
+                        />
+                        <div class="invalid-feedback">
+                          Ingresa un costo válido (mayor o igual a 0).
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        id="btnGuardarDestino"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary d-none"
+                        id="btnCancelarDestino"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-8">
+              <div id="mensajeDestinos" class="mb-2 d-none" role="status" aria-live="polite"></div>
+              <div class="card shadow-sm">
+                <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <span class="fw-bold">Destinos registrados</span>
+                  <span class="badge rounded-pill bg-primary" id="totalDestinos"
+                    >0</span
+                  >
+                </div>
+                <div class="table-responsive">
+                  <table
+                    class="table table-striped table-hover align-middle mb-0"
+                  >
+                    <thead class="table-dark">
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Destino</th>
+                        <th scope="col">País</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col" class="text-end">Costo</th>
+                        <th scope="col" class="text-end">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablaDestinos"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!--  TURISTAS  -->
+        <section
+          class="tab-pane fade"
+          id="panel-turistas"
+          role="tabpanel"
+          aria-labelledby="tab-turistas"
+        >
+          <div class="row g-4">
+            <div class="col-lg-4">
+              <div class="card shadow-sm">
+                <div
+                  class="card-header bg-primary text-white"
+                  id="tituloFormTurista"
+                >
+                  Nuevo turista
+                </div>
+                <div class="card-body">
+                  <form id="formTurista" novalidate>
+                    <input type="hidden" id="turistaId" name="id" />
+
+                    <div class="mb-3">
+                      <label for="turistaNombre" class="form-label"
+                        >Nombre</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="turistaNombre"
+                        name="nombre"
+                        maxlength="80"
+                        required
+                      />
+                      <div class="invalid-feedback">Ingresa el nombre.</div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="turistaApellido" class="form-label"
+                        >Apellido</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="turistaApellido"
+                        name="apellido"
+                        maxlength="80"
+                        required
+                      />
+                      <div class="invalid-feedback">Ingresa el apellido.</div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="turistaEmail" class="form-label">Email</label>
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="turistaEmail"
+                        name="email"
+                        maxlength="150"
+                        placeholder="nombre@correo.com"
+                        required
+                      />
+                      <div class="invalid-feedback">
+                        Ingresa un email válido.
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="turistaTelefono" class="form-label"
+                        >Teléfono</label
+                      >
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="turistaTelefono"
+                        name="telefono"
+                        maxlength="16"
+                        pattern="\+?\d{7,15}"
+                        placeholder="0991234567"
+                        required
+                      />
+                      <div class="invalid-feedback">
+                        Entre 7 y 15 dígitos (puede iniciar con +).
+                      </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        id="btnGuardarTurista"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary d-none"
+                        id="btnCancelarTurista"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-8">
+              <div id="mensajeTuristas" class="mb-2 d-none" role="status" aria-live="polite"></div>
+              <div class="card shadow-sm">
+                <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <span class="fw-bold">Turistas registrados</span>
+                  <span class="badge rounded-pill bg-primary" id="totalTuristas"
+                    >0</span
+                  >
+                </div>
+                <div class="table-responsive">
+                  <table
+                    class="table table-striped table-hover align-middle mb-0"
+                  >
+                    <thead class="table-dark">
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Apellido</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Teléfono</th>
+                        <th scope="col" class="text-end">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablaTuristas"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!--  RESERVAS  -->
+        <section
+          class="tab-pane fade"
+          id="panel-reservas"
+          role="tabpanel"
+          aria-labelledby="tab-reservas"
+        >
+          <div class="row g-4">
+            <div class="col-lg-4">
+              <div class="card shadow-sm">
+                <div
+                  class="card-header bg-primary text-white"
+                  id="tituloFormReserva"
+                >
+                  Nueva reserva
+                </div>
+                <div class="card-body">
+                  <form id="formReserva" novalidate>
+                    <input type="hidden" id="reservaId" name="id" />
+
+                    <div class="mb-3">
+                      <label for="reservaTurista" class="form-label"
+                        >Turista</label
+                      >
+                      <select
+                        class="form-select"
+                        id="reservaTurista"
+                        name="turista_id"
+                        required
+                      >
+                        <option value="">Selecciona un turista</option>
+                      </select>
+                      <div class="invalid-feedback">Selecciona un turista.</div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="reservaDestino" class="form-label"
+                        >Destino</label
+                      >
+                      <select
+                        class="form-select"
+                        id="reservaDestino"
+                        name="destino_id"
+                        required
+                      >
+                        <option value="">Selecciona un destino</option>
+                      </select>
+                      <div class="invalid-feedback">Selecciona un destino.</div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                      <div class="col-sm-7">
+                        <label for="reservaFecha" class="form-label"
+                          >Fecha de viaje</label
+                        >
+                        <input
+                          type="date"
+                          class="form-control"
+                          id="reservaFecha"
+                          name="fecha_viaje"
+                          required
+                        />
+                        <div class="invalid-feedback">
+                          Fecha desde hoy en adelante.
+                        </div>
+                      </div>
+                      <div class="col-sm-5">
+                        <label for="reservaPersonas" class="form-label"
+                          >Personas</label
+                        >
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="reservaPersonas"
+                          name="cantidad_personas"
+                          min="1"
+                          max="50"
+                          step="1"
+                          value="1"
+                          required
+                        />
+                        <div class="invalid-feedback">Entre 1 y 50.</div>
+                      </div>
+                    </div>
+
+                    <div
+                      class="alert alert-info d-flex justify-content-between align-items-center py-2"
+                    >
+                      <span>Total estimado</span>
+                      <strong id="reservaTotal">$0,00</strong>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                      <button
+                        type="submit"
+                        class="btn btn-success"
+                        id="btnGuardarReserva"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary d-none"
+                        id="btnCancelarReserva"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-8">
+              <div id="mensajeReservas" class="mb-2 d-none" role="status" aria-live="polite"></div>
+              <div class="card shadow-sm">
+                <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <span class="fw-bold">Reservas registradas</span>
+                  <span class="badge rounded-pill bg-primary" id="totalReservas"
+                    >0</span
+                  >
+                </div>
+                <div class="table-responsive">
+                  <table
+                    class="table table-striped table-hover align-middle mb-0"
+                  >
+                    <thead class="table-dark">
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Turista</th>
+                        <th scope="col">Destino</th>
+                        <th scope="col">Fecha de viaje</th>
+                        <th scope="col" class="text-center">Personas</th>
+                        <th scope="col" class="text-end">Total</th>
+                        <th scope="col" class="text-end">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tablaReservas"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Modal error -->
+    <div
+      class="modal fade"
+      id="modalConfirmar"
+      tabindex="-1"
+      aria-labelledby="modalConfirmarTitulo"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalConfirmarTitulo">
+              Confirmar eliminación
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body" id="modalConfirmarTexto"></div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button type="button" class="btn btn-danger" id="btnConfirmar">
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/destinos.js"></script>
+    <script src="assets/js/turistas.js"></script>
+    <script src="assets/js/reservas.js"></script>
+  </body>
+</html>
